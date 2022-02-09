@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  dex:
+    image: dexidp/dex
+    ports:
+      - "5556:5556"
+    volumes:
+      - ${PWD}/dex/:/etc/dex
+    command: dex serve /etc/dex/config.yaml
+
+
+#docker run -p 5556:5556 -v ${PWD}/dex/:/etc/dex dexidp/dex dex serve /etc/dex/config.yaml
