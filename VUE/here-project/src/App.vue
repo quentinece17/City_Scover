@@ -1,12 +1,17 @@
 <template>
     <div id="app">
-        <HereMap
-            appId="XerC0BPxj3nAfCEkk18t"
-            apiKey="hBm-zCh7Zb5L3zHDdz9qxMcaIR5rlzFqlFiH9V0SWLo"
-            lat="37.7397"
-            lng="-121.4252"
-            width="100%"
-            height="835px" />
+        <div style="padding: 10px 0">
+            <div>
+                <label style="display: inline-block; width: 60px; color: #FFF">Start</label>
+                <input type="text" v-model="start" />
+            </div>
+            <div>
+                <label style="display: inline-block; width: 60px; color: #FFF">Finish</label>
+                <input type="text" v-model="finish" />
+            </div>
+            <button type="button" v-on:click="route()">Route</button>
+        </div>
+        <HereMap ref="map" apiKey="GFWk0kE1c3iFwNqATG4_k_w-neLk8UaOwZbjAZmqz_g" lat="37.7397" lng="-121.4252" width="60" height="530px" />
     </div>
 </template>
 
@@ -17,16 +22,24 @@
         name: 'app',
         components: {
             HereMap
+        },
+        data() {
+            return {
+                start: "",
+                finish: ""
+            }
+        },
+        methods: {
+            route() {
+                this.$refs.map.route(this.start, this.finish);
+            }
         }
     }
 </script>
 
 <style>
-    #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        color: #2c3e50;
+    body {
+        margin: 20px;
+        background-color: #1d232d;
     }
 </style>
