@@ -4,7 +4,7 @@ var platform = new H.service.Platform({
     'apikey': 'uEPKsGh4MqeMDColZwJ8PdS-GPfGKYx03_A4SbyB0_I'
   });
 
-var myPosition = {lat:52.53086, lng:13.38374};
+var myPosition = {lat:51.0, lng:0.0};
 
 var defaultLayers = platform.createDefaultLayers();
 
@@ -15,7 +15,7 @@ var map = new H.Map(
     {
         zoom: 10,
         center: myPosition
-});
+}); 
 
 var mapEvents = new H.mapevents.MapEvents(map);
 
@@ -43,5 +43,5 @@ getBrowserLocation();
 
 map.addEventListener('tap', function(evt) {
     // Log 'tap' and 'mouse' events:
-    console.log(evt.type, evt.currentPointer.type); 
+    console.log(evt.type, evt.currentPointer.type);
 });
