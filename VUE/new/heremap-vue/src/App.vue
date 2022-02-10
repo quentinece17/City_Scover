@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HereMap  :center="center" />
+    <HereMap />
   </div>
 </template>
 
@@ -11,16 +11,6 @@ export default {
   components: {
     HereMap
     // Remove the HelloWorld.vue 
-  },
-  data() {
-return {
-    // we are this as prop to the HereMap component 
-  center:{ 
-    lat: 25.730610, 
-    lng: 0.935242
-    }
-}
-  
   }
 }
 </script>

@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       platform: null,
-      apikey: "{Hck0yJrPNeEBLmDMBM8_29rh3FkY6oaq1kF0mB3hfoY}"
+      apikey: "sNxKViykcchOTxAye4ww0jKyqJHDE75M8U2oR2tAh30"
       // You can get the API KEY from developer.here.com
     };
   },
@@ -26,9 +26,28 @@ export default {
       apikey: this.apikey
     });
     this.platform = platform;
+    this.getLocation();
     this.initializeHereMap();
   },
   methods: {
+    getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position =>  {
+                //console.log(position.coords.latitude);
+                //console.log(position.coords.longitude);
+                this.center = { lat: position.coords.latitude, lng: position.coords.longitude };
+                console.log(this.center)
+            },
+            error => {
+                console.log(error.message)
+            }
+            );
+        } else {
+            console.log("Your browser does not support geolocation API");
+            this.center = { lat: 48.856614, lng: 2.3522219 };
+        }
+    },
+
     initializeHereMap() { // rendering map
 
       const mapContainer = this.$refs.hereMap;
@@ -36,12 +55,15 @@ export default {
       // Obtain the default map types from the platform object
       var maptypes = this.platform.createDefaultLayers();
 
+      this.getLocation();
+      console.log(this.center);
       // Instantiate (and display) a map object:
       var map = new H.Map(mapContainer, maptypes.vector.normal.map, {
-        zoom: 10,
+        zoom: 4,
         center: this.center
         // center object { lat: 40.730610, lng: -73.935242 }
       });
+      
 
       addEventListener("resize", () => map.getViewPort().resize());
 
