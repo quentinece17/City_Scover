@@ -38,9 +38,9 @@
     "recursive": true
   },
   "scripts": {
-    "reset": "bin/reset",
-    "develop": "bin/init && bin/start",
-    "start": "bin/start",
+    "reset": "node bin/reset",
+    "develop": "node bin/init && node bin/start",
+    "start": "node bin/start",
     "test": "TEST_PAYLOAD_EMAIL=admin@example.com mocha 'test/**/*.js'"
   }
 }
