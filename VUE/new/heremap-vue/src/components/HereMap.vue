@@ -31,6 +31,7 @@ export default {
       apikey: this.apikey
     });
     this.platform = platform;
+    this.getLocation();
     this.initializeHereMap();
     // this.router = this.platform.getRoutingService();
     // this.geocoder = this.platform.getGeocodingService();
@@ -87,12 +88,15 @@ export default {
       // Obtain the default map types from the platform object
       var maptypes = this.platform.createDefaultLayers();
 
+      this.getLocation();
+      console.log(this.center);
       // Instantiate (and display) a map object:
       var map = new H.Map(mapContainer, maptypes.vector.normal.map, {
-        zoom: 10,
+        zoom: 4,
         center: this.center
         // center object { lat: 40.730610, lng: -73.935242 }
       });
+      
 
       addEventListener("resize", () => map.getViewPort().resize());
 
