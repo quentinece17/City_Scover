@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Map with Driving Route from A to B</title>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <link rel="stylesheet" type="text/css" href="demo.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="../template.css" />
+    <script type="text/javascript" src='../test-credentials.js'></script>    
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <style type="text/css">
+      .directions li span.arrow {
+        display:inline-block;
+        min-width:28px;
+        min-height:28px;
+        background-position:0px;
+        background-image: url("https://heremaps.github.io/maps-api-for-javascript-examples/map-with-route-from-a-to-b/img/arrows.png");
+        position:relative;
+        top:8px;
+      }
+      .directions li span.depart  {
+        background-position:-28px;
+      }
+      .directions li span.rightturn  {
+        background-position:-224px;
+      }
+      .directions li span.leftturn{
+        background-position:-252px;
+      }
+      .directions li span.arrive  {
+        background-position:-1288px;
+      }
+      </style>
+  </head>
+  <body id="markers-on-the-map">
+    
+    <div class="page-header">
+        <h1>City Scover</h1>
+        <p>Veuillez entrez vos paramètres</p>
+    </div>
+    <div id="info">
+      <div>
+        <label style="display: inline-block; width: 80px; color: rgb(0, 0, 0)">Départ</label>
+        <input type="text" id="start" /><br />
+      </div>
+      <div>
+        <label style="display: inline-block; width: 80px; color: rgb(0, 0, 0)">Destination</label>
+        <input type="text" id="finish" /><br />
+      </div>
+      <div>
+        <label>Moyen de Transport</label>
+        <input type="radio" name="modeTransport" id="car"/>Voiture<input type="radio" name="modeTransport" id="pedestrian"/>Piétons<input type="radio" name="modeTransport" id="bicycle"/>Vélo<br />
+      </div>
+      <div>
+        <label>Type d'itinéraire</label>
+        <input type="radio" name="typeTransport" id="fastest"/>Le plus rapide<input type="radio" name="typeTransport" id="shortest"/>Le plus court<br />
+      </div>
+      <label id="interest">Centres d'Intérêts</label>
+      <select name="interest" id="interestInput">
+          <optgroup label="Restauration">
+              <option>Café/thé</option>
+              <option>Manger/Boire</option>
+              <option>Snack/Fast-Food</option>
+              <option>Restaurant</option>
+          </optgroup>
+          <optgroup label="Loisirs">
+              <option>Loisirs plein air</option>
+              <option>Sites Culturels / Musées</option>
+              <option>Autre</option>
+          </optgroup>
+      </select><br>
+      
+      <button class="route" type="button" value=" ">Calculer Itinéraire</button>
+    </div>
+    <div id="map"></div>
+    <div id="panel"></div>
+    <script type="text/javascript" src='demo.js'></script>
+  </body>
+</html>
