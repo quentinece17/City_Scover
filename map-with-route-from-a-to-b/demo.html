@@ -6,6 +6,7 @@
     <title>Map with Driving Route from A to B</title>
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
     <link rel="stylesheet" type="text/css" href="demo.css" />
+    <link rel="stylesheet" type="text/css" href="multipleCheckboxes.css" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <link rel="stylesheet" type="text/css" href="../template.css" />
     <script type="text/javascript" src='../test-credentials.js'></script>    
@@ -13,6 +14,7 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script type="text/javascript" src="multipleCheckboxes.js"></script>
     <style type="text/css">
       .directions li span.arrow {
         display:inline-block;
@@ -74,6 +76,46 @@
               <option>Autre</option>
           </optgroup>
       </select><br>
+
+      <form>
+        <div class="multiselect">
+          <div class="selectBox" onclick="showCheckboxes()">
+            <select>
+              <option>Choisir Centre(s) d'Intérêt(s)</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes">
+            <label for="Restauration">
+                <optgroup label="Restauration">
+                  <br>
+                  <input type="checkbox" id="test" />Café/thé</label> 
+                  <input type="checkbox" id="coffee-tea" />Café/thé</label> 
+                  <br>
+                  <input type="checkbox" id="eat-drink" />Manger/Boire</label>
+                  <br>
+                  <input type="checkbox" id="snacks-fast-food" />Snack/Fast-Food</label>
+                  <br>
+                  <input type="checkbox" id="restaurant" />Restaurant</label>
+                  <br>
+                </optgroup>
+                
+
+               
+
+                </optgroup>
+            <label for="Loisirs">
+              <optgroup label="Loisirs"> 
+                <input type="checkbox" id="dzazad" />Loisirs plein air</label> 
+                <input type="checkbox" id="sights-museums" />Sites Culturels / Musées</label> 
+                <br>
+                <input type="checkbox" id="leisure-outdoor" />Loisirs plein air</label> 
+                <br>
+                <input type="checkbox" id="going-out" />Autre</label> 
+              </optgroup>
+          </div>
+        </div>
+      </form>
       
       <button class="route" type="button" value=" ">Calculer Itinéraire</button>
     </div>
