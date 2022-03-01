@@ -61,7 +61,7 @@ function onSuccessGeoEnd(result) {
   endLong = locations[0].position.lng
 
   //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
-  // placesSearch(platform);
+  placesSearch(platform);
   calculateRouteFromAtoB(platform);
   }
 
@@ -93,20 +93,22 @@ function calculateRouteFromAtoB(platform) {
 
   //Sending the request to calculate the route
   var router = platform.getRoutingService(null, 8),
-      routeRequestParams = {
-        lang:'fr-fr',
-        routingMode: `${typeTransport}`,
-        transportMode: `${modeTransport}`,
-        origin: `${startLat},${startLong}`, 
-        destination: `${endLat},${endLong}`, 
-        return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
-      };
+  routeRequestParams = {
+    lang:'fr-fr',
+    routingMode: `${typeTransport}`,
+    transportMode: `${modeTransport}`,
+    origin: `${startLat},${startLong}`, 
+    destination: `${endLat},${endLong}`, 
+    return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
+  };
 
   router.calculateRoute(
-    routeRequestParams,
-    onSuccess,
-    onError
+  routeRequestParams,
+  onSuccess,
+  onError
   );
+
+ 
 }
 
 /**
@@ -123,7 +125,6 @@ function onSuccess(result) {
   addWaypointsToPanel(route);
   addManueversToPanel(route);
   addSummaryToPanel(route);
-  placesSearch(route);
 }
 
 /**
@@ -341,11 +342,11 @@ function toMMSS(duration) {
   return Math.floor(duration / 60) + ' minutes et ' + (duration % 60) + ' secondes';
 }
 
-/*
- * This function allows to find some places around a position
- * @param {H.service.Platform} platform A stub class to access HERE services
- */
-function placesSearch (route) {
+// /*
+//  * This function allows to find some places around a position
+//  * @param {H.service.Platform} platform A stub class to access HERE services
+//  */
+function placesSearch (platform) {
 
   //Récupération du centre d'intérêt de l'utilisateur
   var inputInterest = document.getElementById('interestInput').value;
@@ -359,54 +360,38 @@ function placesSearch (route) {
   else if (inputInterest=="Sites Culturels / Musées"){interest="sights-museums"}
   else if (inputInterest=="Autre"){interest="going-out"}
 
-  route.sections.forEach((section) => {
-    let poly = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
-    let actions = section.actions;
-    // Add a marker of interest for each maneuver
-    var i;
-    for (i = 0; i < actions.length; i += 1) {
-      let action = actions[i];
-      let thisLat = poly[action.offset * 3]
-      let thisLng = poly[action.offset * 3 + 1]  
-    
-      var placesService= platform.getPlacesService(),
-        parameters = {
-          at: `${thisLat},${thisLng}`,
-          cat: `${interest}`};
+  var coords = [[startLat, startLong], [endLat, endLong]]
 
-      placesService.explore(parameters,
-        function (result) {
-          // console.log(result.results.items);
-          var allPlaces = new Array()
-          for(var j=0; j < result.results.items.length; j++){
-            var newMarker = new H.map.Marker({lat:result.results.items[j].position[0], lng:result.results.items[j].position[1]});
-            newMarker.instruction = result.results.items[j].title;
-            allPlaces.push(newMarker)
-          }
+  for (i=0; i < coords.length; i += 1) {
+    var placesService= platform.getPlacesService(),
+    parameters = {
+      at: `${coords[i][0]},${coords[i][1]}`,
+      cat: `${interest}`};
 
-          // var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
-          // newMarker1.instruction = result.results.items[0].title;
+    placesService.explore(parameters,
+      function (result) {
+        console.log(result.results.items);
 
-          // var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
-          // newMarker2.instruction = result.results.items[1].title;
+        var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
+        newMarker1.instruction = result.results.items[0].title;
 
-          // var newMarker3 = new H.map.Marker({lat:result.results.items[2].position[0], lng:result.results.items[2].position[1]});
-          // newMarker3.instruction = result.results.items[2].title;
+        var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
+        newMarker2.instruction = result.results.items[1].title;
 
-          var group = new H.map.Group();
-          console.log("J'ai ajouté le duo",allPlaces[0].instruction," et ",allPlaces[1].instruction)
-          group.addObjects([allPlaces[0], allPlaces[1]]);
-          map.addObject(group);
+        var group = new H.map.Group();
+        group.addObjects([newMarker1, newMarker2]);
+        map.addObject(group);
 
-          group.addEventListener('tap', function (evt) {
-            map.setCenter(evt.target.getGeometry());
-            openBubble(evt.target.getGeometry(), evt.target.instruction);
-          }, false);
+        group.addEventListener('tap', function (evt) {
+          map.setCenter(evt.target.getGeometry());
+          openBubble(evt.target.getGeometry(), evt.target.instruction);
+        }, false);
+
       }, function (error) {
         alert(error);
       });
-    }
-  });
+  }
+  
 }
 
 
