@@ -120,6 +120,7 @@ function onSuccess(result) {
 
   var route = result.routes[0];
 
+  map.removeObjects(map.getObjects())
   addRouteShapeToMap(route);
   addManueversToMap(route);
   addWaypointsToPanel(route);
