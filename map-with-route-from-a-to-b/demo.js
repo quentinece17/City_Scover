@@ -118,6 +118,7 @@ function onSuccess(result) {
 
   var route = result.routes[0];
 
+  clearMap()
   addRouteShapeToMap(route);
   addManueversToMap(route);
   addWaypointsToPanel(route);
@@ -202,6 +203,7 @@ function openBubble(position, text) {
  */
 function addRouteShapeToMap(route) {
   route.sections.forEach((section) => {
+   
     // decode LineString from the flexible polyline
     let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline);
 
@@ -220,6 +222,7 @@ function addRouteShapeToMap(route) {
       bounds: polyline.getBoundingBox()
     });
   });
+ 
 }
 
 /**
@@ -407,8 +410,12 @@ function placesSearch (route) {
       });
     }
   });
+  /////
 }
 
+function clearMap(){
+  map.removeObjects(map.getObjects())
+}
 
 // START OF THE PROCESS
 
