@@ -351,9 +351,10 @@ function toMMSS(duration) {
 function placesSearch (route) {
 
   //Récupération du centre d'intérêt de l'utilisateur
-  var inputInterest = document.getElementById('interestInput').value;
+  // var inputInterest = document.getElementById('interestInput').value;
   var interest;
 
+  /*
   if (inputInterest=="Café/thé"){interest="coffee-tea"}
   else if (inputInterest=="Manger/Boire"){interest="eat-drink"}
   else if (inputInterest=="Snack/Fast-Food"){interest="snacks-fast-food"}
@@ -361,6 +362,21 @@ function placesSearch (route) {
   else if (inputInterest=="Loisirs plein air"){interest="leisure-outdoor"}
   else if (inputInterest=="Sites Culturels / Musées"){interest="sights-museums"}
   else if (inputInterest=="Autre"){interest="going-out"}
+  */
+
+  // test avec multiple center of interest
+  var interestList = new Array();
+  if(document.getElementById("coffee-tea").checked){interestList.push("coffee-tea")}
+  if(document.getElementById("eat-drink").checked){interestList.push("eat-drink")}
+  if(document.getElementById("snacks-fast-food").checked){interestList.push("snacks-fast-food")}
+  if(document.getElementById("restaurant").checked){interestList.push("restaurant")}
+  if(document.getElementById("leisure-outdoor").checked){interestList.push("leisure-outdoor")}
+  if(document.getElementById("sights-museums").checked){interestList.push("sights-museums")}
+  if(document.getElementById("going-out").checked){interestList.push("going-out")}
+
+  console.log(interestList);
+  // fin de test
+
 
   route.sections.forEach((section) => {
     let poly = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
@@ -375,7 +391,7 @@ function placesSearch (route) {
       var placesService= platform.getPlacesService(),
         parameters = {
           at: `${thisLat},${thisLng}`,
-          cat: `${interest}`};
+          cat: `${interestList}`};
 
       placesService.explore(parameters,
         function (result) {
