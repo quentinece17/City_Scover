@@ -42,6 +42,7 @@ let startLat, startLong, endLat, endLong
 
 var latbounds = [48.821974,48.892040];
 var lngbounds =[2.264675,2.413204];
+var interestArray = new Array()
 
 /**
  * This function is called when the Geocoder REST API provides a response
@@ -64,18 +65,28 @@ function onSuccessGeoStart(result) {
   
   }
 
+function sleep(ms) {
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+}
+
 /**
  * This function is called when the Geocoder REST API provides a response
  * @param {Object} result 
  */
-function onSuccessGeoEnd(result) {
+async function onSuccessGeoEnd(result) {
 
   var locations = result.items;
   endLat = locations[0].position.lat
   endLong = locations[0].position.lng
 
   //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
-  // placesSearch(platform);
+  // setTimeout(() =>{placesSearch(platform)}, 5000)
+
+  map.removeObjects(map.getObjects())
+  placesSearch(platform);
+  await sleep(1000);
   calculateRouteFromAtoB(platform);
   }
 
@@ -83,7 +94,7 @@ function onSuccessGeoEnd(result) {
  * Calculates and displays a route from the starting point to the destination point
  * @param {H.service.Platform} platform A stub class to access HERE services
  */
-function calculateRouteFromAtoB(platform) {
+async function calculateRouteFromAtoB(platform) {
 
   //Find the Transport Mode
   var car = document.getElementById('car').checked;
@@ -105,21 +116,25 @@ function calculateRouteFromAtoB(platform) {
   if (fastest==true) {typeTransport="fast"}
   else if (shortest==true) {typeTransport="short"}
 
+  //console.log(interestArray);
+  //console.log(interestArray[0][0]);
+
   //Sending the request to calculate the route
   var router = platform.getRoutingService(null, 8),
-      routeRequestParams = {
-        lang:'fr-fr',
-        routingMode: `${typeTransport}`,
-        transportMode: `${modeTransport}`,
-        origin: `${startLat},${startLong}`, 
-        destination: `${endLat},${endLong}`, 
-        return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
-      };
+  routeRequestParams = {
+    lang:'fr-fr',
+    routingMode: `${typeTransport}`,
+    transportMode: `${modeTransport}`,
+    origin: `${startLat},${startLong}`, 
+    destination: `${endLat},${endLong}`, 
+    waypoint0:`${interestArray[1][0]},${interestArray[1][1]}`,
+    return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
+  };
 
   router.calculateRoute(
-    routeRequestParams,
-    onSuccess,
-    onError
+  routeRequestParams,
+  onSuccess,
+  onError
   );
 }
 
@@ -132,13 +147,12 @@ function onSuccess(result) {
 
   var route = result.routes[0];
 
-  clearMap()
+  
   addRouteShapeToMap(route);
   addManueversToMap(route);
   addWaypointsToPanel(route);
   addManueversToPanel(route);
   addSummaryToPanel(route);
-  placesSearch(route);
 }
 
 /**
@@ -360,15 +374,17 @@ function toMMSS(duration) {
   return Math.floor(duration / 60) + ' minutes et ' + (duration % 60) + ' secondes';
 }
 
-/*
- * This function allows to find some places around a position
- * @param {H.service.Platform} platform A stub class to access HERE services
- */
-function placesSearch (route) {
+// /*
+//  * This function allows to find some places around a position
+//  * @param {H.service.Platform} platform A stub class to access HERE services
+//  */
+function placesSearch (platform) {
 
+  //interestArray.length = 0
   //Récupération du centre d'intérêt de l'utilisateur
-  // var inputInterest = document.getElementById('interestInput').value;
-  var interest;
+  //var inputInterest = document.getElementById('eat-drink').checked;
+  var interest = 'eat-drink';
+  interestArray = new Array()
 
   /*
   if (inputInterest=="Café/thé"){interest="coffee-tea"}
@@ -379,6 +395,7 @@ function placesSearch (route) {
   else if (inputInterest=="Sites Culturels / Musées"){interest="sights-museums"}
   else if (inputInterest=="Autre"){interest="going-out"}
   */
+
 
   // test avec multiple center of interest
   var interestList = new Array();
@@ -394,60 +411,45 @@ function placesSearch (route) {
   // fin de test
 
 
-  route.sections.forEach((section) => {
-    let poly = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
-    let actions = section.actions;
-    // Add a marker of interest for each maneuver
-    var i;
-    for (i = 0; i < actions.length; i += 1) {
-      let action = actions[i];
-      let thisLat = poly[action.offset * 3]
-      let thisLng = poly[action.offset * 3 + 1]  
-    
-      var placesService= platform.getPlacesService(),
-        parameters = {
-          at: `${thisLat},${thisLng}`,
-          cat: `${interestList}`};
+  var coords = [[startLat, startLong], [endLat, endLong]]
 
-      placesService.explore(parameters,
-        function (result) {
-          // console.log(result.results.items);
-          var allPlaces = new Array()
-          for(var j=0; j < result.results.items.length; j++){
-            var newMarker = new H.map.Marker({lat:result.results.items[j].position[0], lng:result.results.items[j].position[1]});
-            newMarker.instruction = result.results.items[j].title;
-            allPlaces.push(newMarker)
-          }
+  for (let i=0; i < coords.length; i += 1) {
+    var placesService= platform.getPlacesService(),
+    parameters = {
+      at: `${coords[i][0]},${coords[i][1]}`,
+      cat: `${interestList}`};
 
-          // var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
-          // newMarker1.instruction = result.results.items[0].title;
+    placesService.explore(parameters,
+      function (result) {
 
-          // var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
-          // newMarker2.instruction = result.results.items[1].title;
+        var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
+        newMarker1.instruction = result.results.items[0].title;
+        //console.log(newMarker1)
+        interestArray.push([result.results.items[0].position[0],result.results.items[0].position[1]]);
 
-          // var newMarker3 = new H.map.Marker({lat:result.results.items[2].position[0], lng:result.results.items[2].position[1]});
-          // newMarker3.instruction = result.results.items[2].title;
+        var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
+        newMarker2.instruction = result.results.items[1].title;
+        //console.log(newMarker2)
+        interestArray.push([result.results.items[1].position[0],result.results.items[1].position[1]]);
+        console.log(interestArray);
 
-          var group = new H.map.Group();
-          console.log("J'ai ajouté le duo",allPlaces[0].instruction," et ",allPlaces[1].instruction)
-          group.addObjects([allPlaces[0], allPlaces[1]]);
-          map.addObject(group);
+        var group = new H.map.Group();
+        console.log("J'ai ajouté le duo",newMarker1.instruction," et ",newMarker2.instruction)
+        group.addObjects([newMarker1, newMarker2]);
+        map.addObject(group);
 
-          group.addEventListener('tap', function (evt) {
-            map.setCenter(evt.target.getGeometry());
-            openBubble(evt.target.getGeometry(), evt.target.instruction);
-          }, false);
+        group.addEventListener('tap', function (evt) {
+          //map.setCenter(evt.target.getGeometry());
+          openBubble(evt.target.getGeometry(), evt.target.instruction);
+        }, false);
+
       }, function (error) {
         alert(error);
       });
-    }
-  });
-  /////
+  }
 }
 
-function clearMap(){
-  map.removeObjects(map.getObjects())
-}
+
 
 // START OF THE PROCESS
 
