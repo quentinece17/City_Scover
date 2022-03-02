@@ -7,6 +7,7 @@
   var geocoder = platform.getSearchService(),
       geocodingParameters = {
         q: position,
+       
       };
 
   geocoder.geocode(
@@ -37,6 +38,11 @@ function geocodeEnd(platform, position) {
 var startPosition, endPosition
 let startLat, startLong, endLat, endLong
 
+//make sure the queries are limited to paris
+
+var latbounds = [48.821974,48.892040];
+var lngbounds =[2.264675,2.413204];
+
 /**
  * This function is called when the Geocoder REST API provides a response
  * @param {Object} result 
@@ -46,8 +52,16 @@ function onSuccessGeoStart(result) {
   var locations = result.items;
   startLat = locations[0].position.lat
   startLong = locations[0].position.lng
+  
+  if(startLat < latbounds[0] || startLat > latbounds[1] || startLong < lngbounds[0] || startLong > lngbounds[1])
+  {
+    alert("départ pas à Paris !")
+  }
+  else{
+    geocodeEnd(platform, endPosition);
+  }
 
-  geocodeEnd(platform, endPosition);
+  
   }
 
 /**
@@ -163,6 +177,8 @@ var map = new H.Map(mapContainer,
   zoom: 13,
   pixelRatio: window.devicePixelRatio || 1
 });
+
+
 
 // add a resize listener to make sure that the map occupies the whole container
 window.addEventListener('resize', () => map.getViewPort().resize());
