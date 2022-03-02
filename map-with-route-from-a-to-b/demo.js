@@ -37,6 +37,8 @@ function geocodeEnd(platform, position) {
 var startPosition, endPosition
 let startLat, startLong, endLat, endLong
 
+var interestArray = new Array()
+
 /**
  * This function is called when the Geocoder REST API provides a response
  * @param {Object} result 
@@ -50,18 +52,27 @@ function onSuccessGeoStart(result) {
   geocodeEnd(platform, endPosition);
   }
 
+function sleep(ms) {
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+}
+
 /**
  * This function is called when the Geocoder REST API provides a response
  * @param {Object} result 
  */
-function onSuccessGeoEnd(result) {
+async function onSuccessGeoEnd(result) {
 
   var locations = result.items;
   endLat = locations[0].position.lat
   endLong = locations[0].position.lng
 
   //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
+  // setTimeout(() =>{placesSearch(platform)}, 5000)
+
   placesSearch(platform);
+  await sleep(1000);
   calculateRouteFromAtoB(platform);
   }
 
@@ -91,6 +102,9 @@ function calculateRouteFromAtoB(platform) {
   if (fastest==true) {typeTransport="fast"}
   else if (shortest==true) {typeTransport="short"}
 
+  console.log(interestArray);
+  console.log(interestArray[0][0]);
+
   //Sending the request to calculate the route
   var router = platform.getRoutingService(null, 8),
   routeRequestParams = {
@@ -99,6 +113,7 @@ function calculateRouteFromAtoB(platform) {
     transportMode: `${modeTransport}`,
     origin: `${startLat},${startLong}`, 
     destination: `${endLat},${endLong}`, 
+    waypoint0:`${interestArray[1][0]},${interestArray[1][1]}`,
     return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
   };
 
@@ -107,8 +122,6 @@ function calculateRouteFromAtoB(platform) {
   onSuccess,
   onError
   );
-
- 
 }
 
 /**
@@ -349,6 +362,7 @@ function toMMSS(duration) {
 //  */
 function placesSearch (platform) {
 
+  interestArray.length = 0
   //Récupération du centre d'intérêt de l'utilisateur
   var inputInterest = document.getElementById('interestInput').value;
   var interest;
@@ -363,7 +377,7 @@ function placesSearch (platform) {
 
   var coords = [[startLat, startLong], [endLat, endLong]]
 
-  for (i=0; i < coords.length; i += 1) {
+  for (let i=0; i < coords.length; i += 1) {
     var placesService= platform.getPlacesService(),
     parameters = {
       at: `${coords[i][0]},${coords[i][1]}`,
@@ -371,13 +385,16 @@ function placesSearch (platform) {
 
     placesService.explore(parameters,
       function (result) {
-        console.log(result.results.items);
 
         var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
         newMarker1.instruction = result.results.items[0].title;
+        console.log(newMarker1)
+        interestArray.push([result.results.items[0].position[0],result.results.items[0].position[1]]);
 
         var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
         newMarker2.instruction = result.results.items[1].title;
+console.log(newMarker2)
+        interestArray.push([result.results.items[1].position[0],result.results.items[1].position[1]]);
 
         var group = new H.map.Group();
         group.addObjects([newMarker1, newMarker2]);
@@ -392,7 +409,6 @@ function placesSearch (platform) {
         alert(error);
       });
   }
-  
 }
 
 
