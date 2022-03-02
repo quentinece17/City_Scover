@@ -7,6 +7,7 @@
   var geocoder = platform.getSearchService(),
       geocodingParameters = {
         q: position,
+       
       };
 
   geocoder.geocode(
@@ -37,6 +38,10 @@ function geocodeEnd(platform, position) {
 var startPosition, endPosition
 let startLat, startLong, endLat, endLong
 
+//make sure the queries are limited to paris
+
+var latbounds = [48.821974,48.892040];
+var lngbounds =[2.264675,2.413204];
 var interestArray = new Array()
 
 /**
@@ -48,8 +53,16 @@ function onSuccessGeoStart(result) {
   var locations = result.items;
   startLat = locations[0].position.lat
   startLong = locations[0].position.lng
+  
+  if(startLat < latbounds[0] || startLat > latbounds[1] || startLong < lngbounds[0] || startLong > lngbounds[1])
+  {
+    alert("départ pas à Paris !")
+  }
+  else{
+    geocodeEnd(platform, endPosition);
+  }
 
-  geocodeEnd(platform, endPosition);
+  
   }
 
 function sleep(ms) {
@@ -71,6 +84,7 @@ async function onSuccessGeoEnd(result) {
   //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
   // setTimeout(() =>{placesSearch(platform)}, 5000)
 
+  map.removeObjects(map.getObjects())
   placesSearch(platform);
   await sleep(1000);
   calculateRouteFromAtoB(platform);
@@ -80,7 +94,7 @@ async function onSuccessGeoEnd(result) {
  * Calculates and displays a route from the starting point to the destination point
  * @param {H.service.Platform} platform A stub class to access HERE services
  */
-function calculateRouteFromAtoB(platform) {
+async function calculateRouteFromAtoB(platform) {
 
   //Find the Transport Mode
   var car = document.getElementById('car').checked;
@@ -102,8 +116,8 @@ function calculateRouteFromAtoB(platform) {
   if (fastest==true) {typeTransport="fast"}
   else if (shortest==true) {typeTransport="short"}
 
-  console.log(interestArray);
-  console.log(interestArray[0][0]);
+  //console.log(interestArray);
+  //console.log(interestArray[0][0]);
 
   var waypoints = [
     `${interestArray[0][0]},${interestArray[0][1]}`,
@@ -141,7 +155,7 @@ function onSuccess(result) {
 
   var route = result.routes[0];
 
-  map.removeObjects(map.getObjects())
+  
   addRouteShapeToMap(route);
   addManueversToMap(route);
   addWaypointsToPanel(route);
@@ -186,6 +200,8 @@ var map = new H.Map(mapContainer,
   pixelRatio: window.devicePixelRatio || 1
 });
 
+
+
 // add a resize listener to make sure that the map occupies the whole container
 window.addEventListener('resize', () => map.getViewPort().resize());
 
@@ -225,6 +241,7 @@ function openBubble(position, text) {
  */
 function addRouteShapeToMap(route) {
   route.sections.forEach((section) => {
+   
     // decode LineString from the flexible polyline
     let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline);
 
@@ -243,6 +260,7 @@ function addRouteShapeToMap(route) {
       bounds: polyline.getBoundingBox()
     });
   });
+ 
 }
 
 /**
@@ -370,11 +388,13 @@ function toMMSS(duration) {
 //  */
 function placesSearch (platform) {
 
-  interestArray.length = 0
+  //interestArray.length = 0
   //Récupération du centre d'intérêt de l'utilisateur
-  var inputInterest = document.getElementById('interestInput').value;
-  var interest;
+  //var inputInterest = document.getElementById('eat-drink').checked;
+  var interest = 'eat-drink';
+  interestArray = new Array()
 
+  /*
   if (inputInterest=="Café/thé"){interest="coffee-tea"}
   else if (inputInterest=="Manger/Boire"){interest="eat-drink"}
   else if (inputInterest=="Snack/Fast-Food"){interest="snacks-fast-food"}
@@ -382,6 +402,22 @@ function placesSearch (platform) {
   else if (inputInterest=="Loisirs plein air"){interest="leisure-outdoor"}
   else if (inputInterest=="Sites Culturels / Musées"){interest="sights-museums"}
   else if (inputInterest=="Autre"){interest="going-out"}
+  */
+
+
+  // test avec multiple center of interest
+  var interestList = new Array();
+  if(document.getElementById("coffee-tea").checked){interestList.push("coffee-tea")}
+  if(document.getElementById("eat-drink").checked){interestList.push("eat-drink")}
+  if(document.getElementById("snacks-fast-food").checked){interestList.push("snacks-fast-food")}
+  if(document.getElementById("restaurant").checked){interestList.push("restaurant")}
+  if(document.getElementById("leisure-outdoor").checked){interestList.push("leisure-outdoor")}
+  if(document.getElementById("sights-museums").checked){interestList.push("sights-museums")}
+  if(document.getElementById("going-out").checked){interestList.push("going-out")}
+
+  console.log(interestList);
+  // fin de test
+
 
   var coords = [[startLat, startLong], [endLat, endLong]]
 
@@ -389,27 +425,29 @@ function placesSearch (platform) {
     var placesService= platform.getPlacesService(),
     parameters = {
       at: `${coords[i][0]},${coords[i][1]}`,
-      cat: `${interest}`};
+      cat: `${interestList}`};
 
     placesService.explore(parameters,
       function (result) {
 
         var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
         newMarker1.instruction = result.results.items[0].title;
-        console.log(newMarker1)
+        //console.log(newMarker1)
         interestArray.push([result.results.items[0].position[0],result.results.items[0].position[1]]);
 
         var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
         newMarker2.instruction = result.results.items[1].title;
-console.log(newMarker2)
+        //console.log(newMarker2)
         interestArray.push([result.results.items[1].position[0],result.results.items[1].position[1]]);
+        console.log(interestArray);
 
         var group = new H.map.Group();
+        console.log("J'ai ajouté le duo",newMarker1.instruction," et ",newMarker2.instruction)
         group.addObjects([newMarker1, newMarker2]);
         map.addObject(group);
 
         group.addEventListener('tap', function (evt) {
-          map.setCenter(evt.target.getGeometry());
+          //map.setCenter(evt.target.getGeometry());
           openBubble(evt.target.getGeometry(), evt.target.instruction);
         }, false);
 
@@ -418,6 +456,7 @@ console.log(newMarker2)
       });
   }
 }
+
 
 
 // START OF THE PROCESS
