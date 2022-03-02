@@ -105,6 +105,13 @@ function calculateRouteFromAtoB(platform) {
   console.log(interestArray);
   console.log(interestArray[0][0]);
 
+  var waypoints = [
+    `${interestArray[0][0]},${interestArray[0][1]}`,
+    `${interestArray[1][0]},${interestArray[1][1]}`,
+    `${interestArray[2][0]},${interestArray[2][1]}`,
+    `${interestArray[3][0]},${interestArray[3][1]}`
+  ];
+
   //Sending the request to calculate the route
   var router = platform.getRoutingService(null, 8),
   routeRequestParams = {
@@ -112,6 +119,7 @@ function calculateRouteFromAtoB(platform) {
     routingMode: `${typeTransport}`,
     transportMode: `${modeTransport}`,
     origin: `${startLat},${startLong}`, 
+    via: new H.service.Url.MultiValueQueryParameter( waypoints ),
     destination: `${endLat},${endLong}`, 
     waypoint0:`${interestArray[1][0]},${interestArray[1][1]}`,
     return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
