@@ -42,7 +42,9 @@ let startLat, startLong, endLat, endLong
 
 var latbounds = [48.821974,48.892040];
 var lngbounds =[2.264675,2.413204];
-var interestArray = new Array()
+
+var interestArray = new Array ()
+
 
 /**
  * This function is called when the Geocoder REST API provides a response
@@ -61,7 +63,6 @@ function onSuccessGeoStart(result) {
   else{
     geocodeEnd(platform, endPosition);
   }
-
   
   }
 
@@ -81,20 +82,24 @@ async function onSuccessGeoEnd(result) {
   endLat = locations[0].position.lat
   endLong = locations[0].position.lng
 
-  //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
-  // setTimeout(() =>{placesSearch(platform)}, 5000)
-
-  map.removeObjects(map.getObjects())
-  placesSearch(platform);
-  await sleep(1000);
-  calculateRouteFromAtoB(platform);
+  if(endLat < latbounds[0] || endLat > latbounds[1] || endLong < lngbounds[0] || endLong > lngbounds[1])
+  {
+    alert("arrivée pas à Paris !")
   }
+  else{
+    //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
+    map.removeObjects(map.getObjects())
+    placesSearch(platform);
+    await sleep(2000);
+    calculateRouteFromAtoB(platform);
+  }
+}
 
 /**
  * Calculates and displays a route from the starting point to the destination point
  * @param {H.service.Platform} platform A stub class to access HERE services
  */
-async function calculateRouteFromAtoB(platform) {
+function calculateRouteFromAtoB(platform) {
 
   //Find the Transport Mode
   var car = document.getElementById('car').checked;
@@ -116,14 +121,13 @@ async function calculateRouteFromAtoB(platform) {
   if (fastest==true) {typeTransport="fast"}
   else if (shortest==true) {typeTransport="short"}
 
-  //console.log(interestArray);
-  //console.log(interestArray[0][0]);
+  console.log(interestArray)
 
   var waypoints = [
-    `${interestArray[0][0]},${interestArray[0][1]}`,
-    `${interestArray[1][0]},${interestArray[1][1]}`,
-    `${interestArray[2][0]},${interestArray[2][1]}`,
-    `${interestArray[3][0]},${interestArray[3][1]}`
+    `${interestArray[0].coords.lat},${interestArray[0].coords.lng}`,
+    `${interestArray[1].coords.lat},${interestArray[1].coords.lng}`,
+    `${interestArray[2].coords.lat},${interestArray[2].coords.lng}`,
+    `${interestArray[3].coords.lat},${interestArray[3].coords.lng}`
   ];
 
   //Sending the request to calculate the route
@@ -135,7 +139,6 @@ async function calculateRouteFromAtoB(platform) {
     origin: `${startLat},${startLong}`, 
     via: new H.service.Url.MultiValueQueryParameter( waypoints ),
     destination: `${endLat},${endLong}`, 
-    waypoint0:`${interestArray[1][0]},${interestArray[1][1]}`,
     return: 'polyline,turnByTurnActions,actions,instructions,travelSummary'
   };
 
@@ -155,7 +158,6 @@ function onSuccess(result) {
 
   var route = result.routes[0];
 
-  
   addRouteShapeToMap(route);
   addManueversToMap(route);
   addWaypointsToPanel(route);
@@ -268,40 +270,54 @@ function addRouteShapeToMap(route) {
  * @param {Object} route A route as received from the H.service.RoutingService
  */
 function addManueversToMap(route) {
-  var svgMarkup = '<svg width="18" height="18" ' +
-    'xmlns="http://www.w3.org/2000/svg">' +
-    '<circle cx="8" cy="8" r="8" ' +
-      'fill="#1b468d" stroke="white" stroke-width="1" />' +
-    '</svg>',
-    dotIcon = new H.map.Icon(svgMarkup, {anchor: {x:8, y:8}}),
-    group = new H.map.Group(),
-    i,
-    j;
 
-  route.sections.forEach((section) => {
-    let poly = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
+  // var svgMarkup = '<svg width="18" height="18" ' +
+  //   'xmlns="http://www.w3.org/2000/svg">' +
+  //   '<circle cx="8" cy="8" r="8" ' +
+  //     'fill="#1b468d" stroke="white" stroke-width="1" />' +
+  //   '</svg>',
+  //   dotIcon = new H.map.Icon(svgMarkup, {anchor: {x:8, y:8}}),
+  //   group = new H.map.Group(),
+  //   i,
+  //   j;
 
-    let actions = section.actions;
-    // Add a marker for each maneuver
-    for (i = 0; i < actions.length; i += 1) {
-      let action = actions[i];
-      var marker = new H.map.Marker({
-        lat: poly[action.offset * 3],
-        lng: poly[action.offset * 3 + 1]},
-        {icon: dotIcon});
-      marker.instruction = action.instruction;
-      group.addObject(marker);
-    }
+  var startMarkLoc = { lat: startLat, lng: startLong};
+  var endMarkLoc = { lat: endLat, lng: endLong};
 
-    //Open a bubble if thte user clik on the marker
-    group.addEventListener('tap', function (evt) {
-      map.setCenter(evt.target.getGeometry());
-      openBubble(evt.target.getGeometry(), evt.target.instruction);
-    }, false);
+  var startIcon = new H.map.Icon("https://cdn1.iconfinder.com/data/icons/zoldo-miscellaneous-005/64/start_marker_flag-1024.png", { size: { w: 52, h: 52}});
+  var endIcon = new H.map.Icon("https://cdn0.iconfinder.com/data/icons/basic-uses-symbol-vol-2/100/Flag_Mission_Start_Finish_Goal-1024.png", { size: { w: 52, h: 52}});
 
-    // Add the maneuvers group to the map
-    map.addObject(group);
-  });
+  var startMarkeur = new H.map.Marker(startMarkLoc, { icon: startIcon});
+  var endMarkeur = new H.map.Marker(endMarkLoc, { icon: endIcon});
+
+  var group = new H.map.Group();
+  group.addObjects([startMarkeur, endMarkeur]);
+  map.addObject(group);
+
+  // route.sections.forEach((section) => {
+  //   let poly = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
+
+  //   let actions = section.actions;
+  //   // Add a marker for each maneuver
+  //   for (i = 0; i < actions.length; i += 1) {
+  //     let action = actions[i];
+  //     var marker = new H.map.Marker({
+  //       lat: poly[action.offset * 3],
+  //       lng: poly[action.offset * 3 + 1]},
+  //       {icon: dotIcon});
+  //     marker.instruction = action.instruction;
+  //     group.addObject(marker);
+  //   }
+
+  //   //Open a bubble if thte user clik on the marker
+  //   group.addEventListener('tap', function (evt) {
+  //     map.setCenter(evt.target.getGeometry());
+  //     openBubble(evt.target.getGeometry(), evt.target.instruction);
+  //   }, false);
+
+  //   // Add the maneuvers group to the map
+  //   map.addObject(group);
+  // });
 }
 
 /**
@@ -312,12 +328,13 @@ function addWaypointsToPanel(route) {
   var nodeH3 = document.createElement('h3'),
     labels = [];
 
-  route.sections.forEach((section) => {
-    labels.push(
-      section.turnByTurnActions[0].nextRoad.name[0].value)
-    labels.push(
-      section.turnByTurnActions[section.turnByTurnActions.length - 1].currentRoad.name[0].value)
-  });
+  labels.push(startPosition);
+  
+  for(let i = 0; i < interestArray.length; i += 1) {
+    labels.push(interestArray[i].name);
+  }
+
+  labels.push(endPosition);
 
   nodeH3.textContent = labels.join(' - ');
   routeInstructionsContainer.innerHTML = '';
@@ -388,22 +405,8 @@ function toMMSS(duration) {
 //  */
 function placesSearch (platform) {
 
-  //interestArray.length = 0
   //Récupération du centre d'intérêt de l'utilisateur
-  //var inputInterest = document.getElementById('eat-drink').checked;
-  var interest = 'eat-drink';
   interestArray = new Array()
-
-  /*
-  if (inputInterest=="Café/thé"){interest="coffee-tea"}
-  else if (inputInterest=="Manger/Boire"){interest="eat-drink"}
-  else if (inputInterest=="Snack/Fast-Food"){interest="snacks-fast-food"}
-  else if (inputInterest=="Restaurant"){interest="restaurant"}
-  else if (inputInterest=="Loisirs plein air"){interest="leisure-outdoor"}
-  else if (inputInterest=="Sites Culturels / Musées"){interest="sights-museums"}
-  else if (inputInterest=="Autre"){interest="going-out"}
-  */
-
 
   // test avec multiple center of interest
   var interestList = new Array();
@@ -414,10 +417,6 @@ function placesSearch (platform) {
   if(document.getElementById("leisure-outdoor").checked){interestList.push("leisure-outdoor")}
   if(document.getElementById("sights-museums").checked){interestList.push("sights-museums")}
   if(document.getElementById("going-out").checked){interestList.push("going-out")}
-
-  console.log(interestList);
-  // fin de test
-
 
   var coords = [[startLat, startLong], [endLat, endLong]]
 
@@ -430,19 +429,37 @@ function placesSearch (platform) {
     placesService.explore(parameters,
       function (result) {
 
+        console.log(result)
+
         var newMarker1 = new H.map.Marker({lat:result.results.items[0].position[0], lng:result.results.items[0].position[1]});
         newMarker1.instruction = result.results.items[0].title;
-        //console.log(newMarker1)
-        interestArray.push([result.results.items[0].position[0],result.results.items[0].position[1]]);
+
+        interestArray.push({
+          name: result.results.items[0].title,
+          coords: {
+            lat: result.results.items[0].position[0],
+            lng: result.results.items[0].position[1]
+          },
+          distance: result.results.items[0].distance
+        })
 
         var newMarker2 = new H.map.Marker({lat:result.results.items[1].position[0], lng:result.results.items[1].position[1]});
         newMarker2.instruction = result.results.items[1].title;
-        //console.log(newMarker2)
-        interestArray.push([result.results.items[1].position[0],result.results.items[1].position[1]]);
-        console.log(interestArray);
+
+        interestArray.push({
+          name: result.results.items[1].title,
+          coords: {
+            lat: result.results.items[1].position[0],
+            lng: result.results.items[1].position[1]
+          },
+          distance: result.results.items[1].distance
+        })
+
+        interestArray.sort(function compare(a, b) {
+          return a.distance - b.distance;
+        });
 
         var group = new H.map.Group();
-        console.log("J'ai ajouté le duo",newMarker1.instruction," et ",newMarker2.instruction)
         group.addObjects([newMarker1, newMarker2]);
         map.addObject(group);
 
@@ -455,9 +472,8 @@ function placesSearch (platform) {
         alert(error);
       });
   }
+
 }
-
-
 
 // START OF THE PROCESS
 
