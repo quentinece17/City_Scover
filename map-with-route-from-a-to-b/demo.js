@@ -84,10 +84,19 @@ async function onSuccessGeoEnd(result) {
   //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
   // setTimeout(() =>{placesSearch(platform)}, 5000)
 
-  map.removeObjects(map.getObjects())
+  // if out of bounds, doesn't calculate
+  if(endLat < latbounds[0] || endLat > latbounds[1] || endLong < lngbounds[0] || endLong > lngbounds[1])
+  {
+    alert("arrivée pas à Paris !")
+  }
+  else{
+    map.removeObjects(map.getObjects())
   placesSearch(platform);
   await sleep(1000);
   calculateRouteFromAtoB(platform);
+  }
+
+  
   }
 
 /**
