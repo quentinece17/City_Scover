@@ -49,10 +49,10 @@
     <label for="drawer-toggle" id="drawer-toggle-label"></label>
     
     <nav  style="z-index: 1;" id="drawer">
-       <ul>
+       <ul id="settings_list">
           <li>
             <div>
-              <p>Veuillez entrez vos paramètres</p>
+              <p id="settings"><strong>Veuillez entrez vos paramètres</strong></p></br>
               <label style="display: inline-block; width: 80px; color: rgb(0, 0, 0)">Départ</label>
               <input type="text" id="start" /><br />
             </div>
@@ -62,15 +62,18 @@
             <input type="text" id="finish" /><br />
           </div></li>
           <li> <div>
-            <label>Moyen de Transport</label>
-            <input type="radio" name="modeTransport" id="car"/>Voiture<input type="radio" name="modeTransport" id="pedestrian"/>Piétons<input type="radio" name="modeTransport" id="bicycle"/>Vélo<br />
+            <label><strong>Moyen de Transport</strong></label><br />
+            <!--<input type="radio" name="modeTransport" id="car"/>Voiture<br />-->
+            <input type="radio" name="modeTransport" id="pedestrian"/>Piétons<br />
+            <input type="radio" name="modeTransport" id="bicycle"/>Vélo<br />
           </div></li>
           <li>   <div>
-            <label>Type d'itinéraire</label>
-            <input type="radio" name="typeTransport" id="fastest"/>Le plus rapide<input type="radio" name="typeTransport" id="shortest"/>Le plus court<br />
+            <label><strong>Type d'itinéraire</strong></label><br />
+            <input type="radio" name="typeTransport" id="fastest"/>Le plus rapide<br />
+            <!--<input type="radio" name="typeTransport" id="shortest"/>Le plus court<br />-->
           </div></li>
           <li>
-            <label id="interest">Centres d'Intérêts</label>
+            <label id="interest"><strong>Centres d'Intérêts</strong></label>
             <form>
               <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes()">
@@ -120,7 +123,7 @@
     <div id="searchWindow">
     
     <div style="text-align: center;" class="page-header">
-        <h1>City Scover</h1>
+        <h1><img src="img/cityscover_title.png" alt="CityScover" /></h1>
         
     </div>
 
@@ -196,7 +199,7 @@
     </div>
     -->
     
-    <div id="map" style="z-index: 0; position:relative;"></div>
+    <div id="map" style="z-index: 0; position:relative; margin-top: 2%;"></div>
     
     <div id="panel"></div>
     <script type="text/javascript" src='demo.js'></script>

@@ -110,24 +110,24 @@ async function onSuccessGeoEnd(result) {
 function calculateRouteFromAtoB(platform) {
 
   //Find the Transport Mode
-  var car = document.getElementById('car').checked;
+  //var car = document.getElementById('car').checked;
   var pedestrian = document.getElementById('pedestrian').checked;
   var bicycle = document.getElementById('bicycle').checked;
 
   var modeTransport;
 
-  if (car==true) {modeTransport="car"}
-  else if (pedestrian==true) {modeTransport="pedestrian"}
+  //if (car==true) {modeTransport="car"}
+  /*else */if (pedestrian==true) {modeTransport="pedestrian"}
   else if (bicycle==true) {modeTransport="bicycle"}
 
   //Find the Route type
   var fastest = document.getElementById('fastest').checked;
-  var shortest = document.getElementById('shortest').checked;
+  //var shortest = document.getElementById('shortest').checked;
 
   var typeTransport;
 
   if (fastest==true) {typeTransport="fast"}
-  else if (shortest==true) {typeTransport="short"}
+  //else if (shortest==true) {typeTransport="short"}
 
   console.log(interestArray)
 

@@ -79,10 +79,10 @@
     left:-420px; 
     height: 100%; 
     width: 420px; 
-    background: #2f2f2f; 
+    background: #ffffffde; 
     overflow-x: hidden; 
     overflow-y: scroll; 
-    padding: 20px; 
+    padding: 60px; 
     -webkit-overflow-scrolling: touch; 
     } 
     
@@ -91,7 +91,7 @@
     #page-content { 
     margin-left: 0px; 
     margin-top: 50px; 
-    width: 100%; 
+    width: 0%; 
     height: calc(100% - 50px); 
     overflow-x:hidden; 
     overflow-y:scroll; 
@@ -103,8 +103,8 @@
     
     #drawer-toggle:checked ~ #drawer-toggle-label { 
     height: 100%; 
-    width: calc(100% - 600px); 
-    background: rgba(255,255,255,.8); 
+    width: 1; 
+    background: rgba(255, 255, 255, 0); 
     } 
     
     #drawer-toggle:checked ~ #drawer-toggle-label, 
@@ -124,18 +124,24 @@
     
     #drawer ul { 
     list-style-type:none; 
+    padding: auto;
     } 
     
     #drawer ul a { 
     display:block; 
-    padding:10px; 
+    padding:30px; 
     color:#c7c7c7; 
     text-decoration:none; 
     } 
     
     #drawer ul a:hover { 
-    color:white; 
+    color:rgba(255, 255, 255, 0); 
     } 
+
+    #drawer ul li{ 
+    margin: 20px;
+    text-align: center;
+    }
     
     /* Responsive MQ */ 
     
