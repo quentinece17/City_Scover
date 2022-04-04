@@ -219,11 +219,11 @@ var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 // Create the default UI components
 var ui = H.ui.UI.createDefault(map, defaultLayers);
 
-var gpsIcon = new H.map.Icon("https://cdn0.iconfinder.com/data/icons/interface-solid-1/48/Gps_navigation_location-512.png", { size: { w: 52, h: 52}});
+var gpsIcon = new H.map.Icon("https://cdn0.iconfinder.com/data/icons/interface-solid-1/48/Gps_navigation_location-512.png", { size: { w: 30, h: 30}});
 //var gpsIcon = new H.map.Icon('https://picfiles.alphacoders.com/517/517442.png', { size: { w: 52, h: 52}});
-var intervalId = window.setInterval(function(){
-  navigator.geolocation.getCurrentPosition(success, error, options);
-}, 10000);
+//var intervalId = window.setInterval(function(){
+navigator.geolocation.getCurrentPosition(success, error, options);
+//}, 10000);
 
 // Hold a reference to any infobubble opened
 var bubble;
