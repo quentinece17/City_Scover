@@ -79,47 +79,57 @@
             <!--<input type="radio" name="typeTransport" id="shortest"/>Le plus court<br />-->
           </div></li>
           <li>
-            <label id="interest"><strong>Centres d'Intérêts</strong></label>
-            <form>
-              <div class="multiselect">
-                <div class="selectBox" onclick="showCheckboxes()">
-                  <select>
-                    <option>Choisir Centre(s) d'Intérêt(s)</option>
-                  </select>
-                  <div class="overSelect"></div>
-                </div>
-                <div id="checkboxes">
-                  <label for="Restauration">
-                      <optgroup label="Restauration">
-                        <br>
-                        <input type="checkbox" id="test" />Café/thé</label> 
-                        <input type="checkbox" id="coffee-tea" />Café/thé</label> 
-                        <br>
-                        <input type="checkbox" id="eat-drink" />Manger/Boire</label>
-                        <br>
-                        <input type="checkbox" id="snacks-fast-food" />Snack/Fast-Food</label>
-                        <br>
-                        <input type="checkbox" id="restaurant" />Restaurant</label>
-                        <br>
-                      </optgroup>
-                      
-                      </optgroup>
-                  <label for="Loisirs">
-                    <optgroup label="Loisirs"> 
-                      <input type="checkbox" id="dzazad" />Loisirs plein air</label> 
-                      <input type="checkbox" id="sights-museums" />Sites Culturels / Musées</label> 
-                      <br>
-                      <input type="checkbox" id="leisure-outdoor" />Loisirs plein air</label> 
-                      <br>
-                      <input type="checkbox" id="going-out" />Autre</label> 
-                    </optgroup>
-                </div>
+            <label id="interest">Centres d'Intérêts</label>
+          <form>
+            <div class="multiselect">
+              <div class="selectBox" onclick="showCheckboxes()">
+                <select>
+                  <option>Choisir Centre(s) d'Intérêt(s)</option>
+                </select>
+                <div class="overSelect"></div>
               </div>
-            </form>
-          </li>
+              <div id="checkboxes">
+                <label for="Restauration">
+                    <optgroup label="Restauration">
+                      <br>
+                      <input type="checkbox" id="test" />Café/thé</label> 
+                      <input type="checkbox" id="coffee-tea" />Café/thé</label> 
+                      <br>
+                      <input type="checkbox" id="eat-drink" />Manger/Boire</label>
+                      <br>
+                      <input type="checkbox" id="snacks-fast-food" />Snack/Fast-Food</label>
+                      <br>
+                      <input type="checkbox" id="restaurant" />Restaurant</label>
+                      <br>
+                    </optgroup>
+                    
+                    </optgroup>
+                <label for="Loisirs">
+                  <optgroup label="Loisirs"> 
+                    <input type="checkbox" id="dzazad" />Loisirs plein air</label> 
+                    <input type="checkbox" id="sights-museums" />Sites Culturels / Musées</label> 
+                    <br>
+                    <input type="checkbox" id="leisure-outdoor" />Loisirs plein air</label> 
+                    <br>
+                    <input type="checkbox" id="going-out" />Autre</label> 
+                  </optgroup>
+              </div>
+            </div>
+          </form>
+          </br>
+          <label id="time">Temps disponible</label>
+          <select name="time" id="timeInput">
+              <option>30 minutes</option>
+              <option>1h</option>
+              <option>2h</option>
+              <option>3h</option>
+              <option>4h</option>
+              <option>5h</option>
+              <option>6h</option>
+              <option>+7h</option>
+          </select><br>
 
-          <li>
-            <button class="route" type="button" value=" ">Calculer Itinéraire</button>
+      <button class="route" type="button" value=" ">Calculer Itinéraire</button>
           </li>
        </ul>
     </nav>
@@ -134,14 +144,10 @@
       <span class="croice"><img src="Images/alerte_croix.webp" style="width:15px;height:15px;"></span>
     </div>
 
-    <div class="page-header">
-        <h1>City Scover</h1>
     <div style="text-align: center;" class="page-header">
         <h1><img src="img/cityscover_title.png" alt="CityScover" /></h1>
         
     </div>
-
-
     <!--
 
     <div id="info">
@@ -158,62 +164,12 @@
         <label>Moyen de Transport</label>
         <input type="radio" name="modeTransport" id="pedestrian"/>Piétons<input type="radio" name="modeTransport" id="bicycle"/>Vélo<br />
       </div>
-      <!-- <div>
+      <div>
         <label>Type d'itinéraire</label>
         <input type="radio" name="typeTransport" id="fastest"/>Le plus rapide<input type="radio" name="typeTransport" id="shortest"/>Le plus court<br />
       </div> -->
-      <label id="interest">Centres d'Intérêts</label>
-      <form>
-        <div class="multiselect">
-          <div class="selectBox" onclick="showCheckboxes()">
-            <select>
-              <option>Choisir Centre(s) d'Intérêt(s)</option>
-            </select>
-            <div class="overSelect"></div>
-          </div>
-          <div id="checkboxes">
-            <label for="Restauration">
-                <optgroup label="Restauration">
-                  <br>
-                  <input type="checkbox" id="test" />Café/thé</label> 
-                  <input type="checkbox" id="coffee-tea" />Café/thé</label> 
-                  <br>
-                  <input type="checkbox" id="eat-drink" />Manger/Boire</label>
-                  <br>
-                  <input type="checkbox" id="snacks-fast-food" />Snack/Fast-Food</label>
-                  <br>
-                  <input type="checkbox" id="restaurant" />Restaurant</label>
-                  <br>
-                </optgroup>
-                
-                </optgroup>
-            <label for="Loisirs">
-              <optgroup label="Loisirs"> 
-                <input type="checkbox" id="dzazad" />Loisirs plein air</label> 
-                <input type="checkbox" id="sights-museums" />Sites Culturels / Musées</label> 
-                <br>
-                <input type="checkbox" id="leisure-outdoor" />Loisirs plein air</label> 
-                <br>
-                <input type="checkbox" id="going-out" />Autre</label> 
-              </optgroup>
-          </div>
-        </div>
-      </form>
-      <label id="time">Temps disponible</label>
-      <select name="time" id="timeInput">
-          <option>30 minutes</option>
-          <option>1h</option>
-          <option>2h</option>
-          <option>3h</option>
-          <option>4h</option>
-          <option>5h</option>
-          <option>6h</option>
-          <option>+7h</option>
-      </select><br>
-
-      <button class="route" type="button" value=" ">Calculer Itinéraire</button>
+  
     </div>
-    -->
     
     <div id="map" style="z-index: 0; position:relative; margin-top: 2%;"></div>
     
