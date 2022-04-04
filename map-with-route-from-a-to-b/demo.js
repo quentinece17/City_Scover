@@ -1,3 +1,5 @@
+/*http://designcouch.com/home/why/2014/04/23/pure-css-drawer-menu/*/
+
 /**
  * This function allows to convert the start address into coordinates
  * @param {H.service.Platform} platform 
@@ -9,7 +11,7 @@
         q: position,
        
       };
-
+  
   geocoder.geocode(
     geocodingParameters,
     onSuccessGeoStart,
@@ -37,6 +39,12 @@ function geocodeEnd(platform, position) {
 
 var startPosition, endPosition
 let startLat, startLong, endLat, endLong
+
+var options = {
+  enableHighAccuracy: true,
+  timeout: 5000,
+  maximumAge: 0
+};
 
 //make sure the queries are limited to paris
 
@@ -204,8 +212,6 @@ var map = new H.Map(mapContainer,
   pixelRatio: window.devicePixelRatio || 1
 });
 
-
-
 // add a resize listener to make sure that the map occupies the whole container
 window.addEventListener('resize', () => map.getViewPort().resize());
 
@@ -216,6 +222,12 @@ var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
 
 // Create the default UI components
 var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+var gpsIcon = new H.map.Icon("https://cdn0.iconfinder.com/data/icons/interface-solid-1/48/Gps_navigation_location-512.png", { size: { w: 30, h: 30}});
+//var gpsIcon = new H.map.Icon('https://picfiles.alphacoders.com/517/517442.png', { size: { w: 52, h: 52}});
+//var intervalId = window.setInterval(function(){
+navigator.geolocation.getCurrentPosition(success, error, options);
+//}, 10000);
 
 // Hold a reference to any infobubble opened
 var bubble;
@@ -507,6 +519,23 @@ async function placesSearch (platform) {
   });
 
   console.log(interestArray)
+}
+
+
+function success(pos) {
+  var crd = pos.coords;
+
+  console.log('Votre position actuelle est :');
+  console.log(`Latitude : ${crd.latitude}`);
+  console.log(`Longitude : ${crd.longitude}`);
+  var gpsMarker = new H.map.Marker({ lat: crd.latitude, lng: crd.longitude }, { icon: gpsIcon });
+  //gpsMarker.setPositon({ lat: crd.latitude, lng: crd.longitude });
+  map.addObject(gpsMarker)
+  console.log(`La précision est de ${crd.accuracy} mètres.`);
+}
+
+function error(err) {
+  console.warn(`ERREUR (${err.code}): ${err.message}`);
 }
 
 // START OF THE PROCESS
