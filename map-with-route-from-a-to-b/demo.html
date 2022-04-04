@@ -42,14 +42,94 @@
   </head>
   <body id="markers-on-the-map">
 
+
+    <!--       TEST DRAWER      -->
+    <link rel="stylesheet" href="drawerStyle.css">
+    <input type="checkbox" id="drawer-toggle" name="drawer-toggle"/>
+    <label for="drawer-toggle" id="drawer-toggle-label"></label>
+    
+    <nav  style="z-index: 1;" id="drawer">
+       <ul>
+          <li>
+            <div>
+              <p>Veuillez entrez vos paramètres</p>
+              <label style="display: inline-block; width: 80px; color: rgb(0, 0, 0)">Départ</label>
+              <input type="text" id="start" /><br />
+            </div>
+          </li>
+          <li><div>
+            <label style="display: inline-block; width: 80px; color: rgb(0, 0, 0)">Destination</label>
+            <input type="text" id="finish" /><br />
+          </div></li>
+          <li> <div>
+            <label>Moyen de Transport</label>
+            <input type="radio" name="modeTransport" id="car"/>Voiture<input type="radio" name="modeTransport" id="pedestrian"/>Piétons<input type="radio" name="modeTransport" id="bicycle"/>Vélo<br />
+          </div></li>
+          <li>   <div>
+            <label>Type d'itinéraire</label>
+            <input type="radio" name="typeTransport" id="fastest"/>Le plus rapide<input type="radio" name="typeTransport" id="shortest"/>Le plus court<br />
+          </div></li>
+          <li>
+            <label id="interest">Centres d'Intérêts</label>
+            <form>
+              <div class="multiselect">
+                <div class="selectBox" onclick="showCheckboxes()">
+                  <select>
+                    <option>Choisir Centre(s) d'Intérêt(s)</option>
+                  </select>
+                  <div class="overSelect"></div>
+                </div>
+                <div id="checkboxes">
+                  <label for="Restauration">
+                      <optgroup label="Restauration">
+                        <br>
+                        <input type="checkbox" id="test" />Café/thé</label> 
+                        <input type="checkbox" id="coffee-tea" />Café/thé</label> 
+                        <br>
+                        <input type="checkbox" id="eat-drink" />Manger/Boire</label>
+                        <br>
+                        <input type="checkbox" id="snacks-fast-food" />Snack/Fast-Food</label>
+                        <br>
+                        <input type="checkbox" id="restaurant" />Restaurant</label>
+                        <br>
+                      </optgroup>
+                      
+                      </optgroup>
+                  <label for="Loisirs">
+                    <optgroup label="Loisirs"> 
+                      <input type="checkbox" id="dzazad" />Loisirs plein air</label> 
+                      <input type="checkbox" id="sights-museums" />Sites Culturels / Musées</label> 
+                      <br>
+                      <input type="checkbox" id="leisure-outdoor" />Loisirs plein air</label> 
+                      <br>
+                      <input type="checkbox" id="going-out" />Autre</label> 
+                    </optgroup>
+                </div>
+              </div>
+            </form>
+          </li>
+
+          <li>
+            <button class="route" type="button" value=" ">Calculer Itinéraire</button>
+          </li>
+       </ul>
+    </nav>
+    <!--       TEST DRAWER      -->
+
+
     <div id="searchWindow">
     
-    <div class="page-header">
+    <div style="text-align: center;" class="page-header">
         <h1>City Scover</h1>
-        <p>Veuillez entrez vos paramètres</p>
+        
     </div>
+
+
+    <!--
+
     <div id="info">
       <div>
+        <p>Veuillez entrez vos paramètres</p>
         <label style="display: inline-block; width: 80px; color: rgb(0, 0, 0)">Départ</label>
         <input type="text" id="start" /><br />
       </div>
@@ -108,13 +188,16 @@
       </form>
       
 
-
+    
       
 
       
       <button class="route" type="button" value=" ">Calculer Itinéraire</button>
     </div>
-    <div id="map"></div>
+    -->
+    
+    <div id="map" style="z-index: 0; position:relative;"></div>
+    
     <div id="panel"></div>
     <script type="text/javascript" src='demo.js'></script>
 
