@@ -99,6 +99,7 @@ async function onSuccessGeoEnd(result) {
   else{
     //Recherche des lieux d'intérêts à proximité à inclure comme étape dans le calcul d'itinéraire
     map.removeObjects(map.getObjects())
+    navigator.geolocation.getCurrentPosition(success, error, options);
     placesSearch(platform);
     await sleep(delay);
     calculateRouteFromAtoB(platform);
@@ -171,7 +172,7 @@ function onSuccess(result) {
   addRouteShapeToMap(route);
   addManueversToMap(route);
   addWaypointsToPanel(route);
-  addManueversToPanel(route);
+  //addManueversToPanel(route);
   addSummaryToPanel(route);
 }
 
@@ -524,6 +525,7 @@ async function placesSearch (platform) {
 
 function success(pos) {
   var crd = pos.coords;
+
 
   console.log('Votre position actuelle est :');
   console.log(`Latitude : ${crd.latitude}`);
