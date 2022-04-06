@@ -76,9 +76,9 @@
     #drawer { 
     position: fixed; 
     top: 0; 
-    left:-400px; 
+    left:-340px; 
     height: 100%; 
-    width: 400px; 
+    width: 340px; 
     background: #ffffffde; 
     overflow-x: hidden; 
     overflow-y: scroll; 
@@ -109,7 +109,7 @@
     
     #drawer-toggle:checked ~ #drawer-toggle-label, 
     #drawer-toggle:checked ~ header { 
-    left: 400px; 
+    left: 340px; 
     } 
     
     #drawer-toggle:checked ~ #drawer { 
@@ -117,7 +117,7 @@
     } 
     
     #drawer-toggle:checked ~ #page-content { 
-    margin-left: 400px; 
+    margin-left: 340px; 
     }
     
     /* Menu item styles */ 
