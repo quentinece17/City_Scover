@@ -1,6 +1,6 @@
 ---------------------------------------------------
 Here are the ownership and the certification details
-of the CityScover 1.2
+of the CityScover 1.5
 ---------------------------------------------------
 
 app_name - 						CityScover
@@ -11,13 +11,13 @@ app_author_organization - 		My Company
 app_author_locality - 			My Company
 app_author_state - 				Ile-de-France
 app_author_country - 			France
-app_password - 					TMDSAnim7JmK
-app_versionName - 				versionName "1.2"
-app_versionCode - 				102
+app_password - 					cGO3ZFa0MgSY
+app_versionName - 				versionName "1.5"
+app_versionCode - 				105
 
 ---------------------------------------------------
 The certification was created by WebIntoApp.com at
-the Wednesday 6th of April 2022 09:34:31 AM
+the Wednesday 6th of April 2022 10:36:05 AM
 
 https://www.webintoapp.com
 ---------------------------------------------------

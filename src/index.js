@@ -389,7 +389,7 @@ function addSummaryToPanel(route) {
 
   var summaryDiv = document.createElement('p'),
     content = '<b>🚶🏼‍♂️ Distance totale </b>' + distance + 'm <br/>' + '<b>⏱ Durée du trajet </b>' + toMMSS(duration) + ' (avec le traffic actuel) <br/>' +
-      '<b>🌳 Économie de CO2 </b>'+ Math.trunc(distance*0.193) +' gCO2 <br/>' + '<b>🔥 Calories dépensées </b>'+ Math.trunc(distance*0.034) +' calories'
+      '<b>🌳 Économie de CO2 </b>'+ Math.trunc(distance*0.193) +' g de CO2 <br/>' + '<b>🔥 Calories dépensées </b>'+ Math.trunc(distance*0.065) +' kCal'
 
   summaryDiv.style.fontSize = 'normal';
   summaryDiv.style.marginLeft = '5%';
