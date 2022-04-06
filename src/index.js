@@ -479,23 +479,26 @@ async function placesSearch (platform) {
     diffLong = endLong - startLong;
   }
 
-  for (let i=0; i < nbMarkeur; i += 1){
 
-    var placesService = platform.getPlacesService(),
-    parameters = {
-      in: `${ouest},${sud},${est},${nord}`,
-      cat: `${interestList}`};
-    
-    placesService.explore(parameters, 
-      async function (result){
+  var placesService = platform.getPlacesService(),
+  parameters = {
+    in: `${ouest},${sud},${est},${nord}`,
+    cat: `${interestList}`};
+  
+  placesService.explore(parameters, 
+    async function (result){
 
-        result.results.items.sort(function compare(a, b) {
-          return a.distance - b.distance;
-        });
+      result.results.items.sort(function compare(a, b) {
+        return a.distance - b.distance;
+      });
 
+      console.log(result.results.items)
+
+      for (let i=0; i < nbMarkeur; i +=1){
+        
         var newMarker1 = new H.map.Marker({lat:result.results.items[i].position[0], lng:result.results.items[i].position[1]});
         newMarker1.instruction = result.results.items[i].title;
-
+        
         var p1 = new H.geo.Point(startLat, startLong);
         var p2 = new H.geo.Point(result.results.items[i].position[0], result.results.items[i].position[1]);
         var dist = p1.distance(p2); 
@@ -508,13 +511,14 @@ async function placesSearch (platform) {
           },
           distance: dist
         })
-        
-      },function (error) {
-        alert(error);
-      });
 
-      await sleep(500);
-  }
+      }
+      
+    },function (error) {
+      alert(error);
+    });
+
+  await sleep(500);
 
   interestArray.sort(function compare(a, b) {
     return a.distance - b.distance;
