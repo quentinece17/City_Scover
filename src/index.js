@@ -492,8 +492,158 @@ async function placesSearch (platform) {
         return a.distance - b.distance;
       });
 
-      console.log(result.results.items)
+      //console.log(result.results.items)
 
+      let allMarkers = new Array();
+
+      allMarkers.push({
+        name: startPosition,
+        coords: {
+          lat: startLat,
+          lng: startLong
+        }
+      })
+
+      for ( let i=0; i < nbMarkeur; i +=1 ) {
+        allMarkers.push({
+          name: result.results.items[i].title,
+          coords: {
+            lat: result.results.items[i].position[0],
+            lng: result.results.items[i].position[1]
+          }
+        })
+      }
+
+      allMarkers.push({
+        name: endPosition,
+        coords: {
+          lat: endLat,
+          lng: endLong
+        }
+      })
+
+      let matriceAdjacence = new Array(allMarkers.length);
+
+      for( let  i=0; i < allMarkers.length; i +=1 ) {
+          matriceAdjacence[i] = new Array(allMarkers.length);
+          var p1 = new H.geo.Point(allMarkers[i].coords.lat, allMarkers[i].coords.lng);
+
+          for( let j=0; j < allMarkers.length; j +=1 ) {
+            var dist;
+            if(i == j || (i == 0 && j == allMarkers.length-1) || (j == 0 && i == allMarkers.length-1))
+              dist = 0;
+            else {
+              var p2 = new H.geo.Point(allMarkers[j].coords.lat, allMarkers[j].coords.lng);
+              dist = p1.distance(p2); 
+            }
+            matriceAdjacence[i][j] = dist;
+          }
+      }
+
+      for( let  i=0; i < allMarkers.length; i +=1 ) {
+        for( let j=0; j < allMarkers.length; j +=1 ) {
+          console.log("Distance entre " + allMarkers[i].name + " et " + allMarkers[j].name + " = " + matriceAdjacence[i][j]);
+        }
+    }
+
+      //This contains the distances from the start node to all other nodes
+      var distances = [];
+      //Initializing with a distance of "Infinity"
+      for (var i = 0; i < matriceAdjacence.length; i++) distances[i] = Number.MAX_VALUE;
+      //The distance from the start node to itself is of course 0
+      distances[0] = 0;
+
+      //This contains whether a node was already visited
+      var visited = [];
+
+      var continuer = true;
+
+      //While there are nodes left to visit...
+      while (continuer) {
+          // ... find the node with the currently shortest distance from the start node...
+          var shortestDistance = Number.MAX_VALUE;
+          var shortestIndex = -1;
+          for (var i = 0; i < matriceAdjacence.length; i++) {
+              //... by going through all nodes that haven't been visited yet
+              if (distances[i] < shortestDistance && !visited[i]) {
+                  shortestDistance = distances[i];
+                  shortestIndex = i;
+              }
+          }
+
+          //console.log("Visiting node " + shortestDistance + " with current distance " + shortestDistance);
+
+          if (shortestIndex === -1) {
+              // There was no node not yet visited --> We are done
+              continuer = false;
+          }
+          else {
+            //...then, for all neighboring nodes....
+            for (var i = 0; i < matriceAdjacence[shortestIndex].length; i++) {
+                var distShortest = parseFloat(distances[shortestIndex]);
+                var matriceShortest = parseFloat(matriceAdjacence[shortestIndex][i]);
+                //...if the path over this edge is shorter...
+                if (matriceAdjacence[shortestIndex][i] !== 0 && distances[i] > distShortest + matriceShortest) {
+                    //...Save this path as new shortest path.
+                    distances[i] = distShortest + matriceShortest;
+                    //console.log("Updating distance of node " + i + " to " + distances[i]);
+                }
+            }
+            // Lastly, note that we are finished with this node.
+            visited[shortestIndex] = true;
+            //console.log("Visited nodes: " + visited);
+            //console.log("Currently lowest distances: " + distances);
+          }
+      }
+
+      console.log("RESULTAT: ", distances);
+
+      /*let preds = new Array(allMarkers.length).fill("-1");
+      var queue = []; // push to add - shift to remove
+      
+      queue.push(allMarkers[0]);
+      let s;
+
+      while(queue.length != 0) {
+        s = queue.shift();
+
+        if( s.name != endPosition ) {
+          var taille = allMarkers.length;
+          if (s.name = startPosition)
+            taille = taille - 1;
+
+          for ( let  i=0; i < taille; i +=1 ) {
+            if( s.name != allMarkers[i].name ) {
+              if ( s.color == 0 ) {
+                allMarkers[i].color = 1;
+                preds[i] = s;
+                queue.push(allMarkers[i]);
+              }
+            }
+          }
+        }
+        console.log("Fini ?");
+      }
+
+      let reverseMarker = new Array();
+      let remonte = allMarkers[allMarkers.length -1];
+      let indice;
+      do{
+        reverseMarker.push(remonte);
+        for( let  i=0; i < allMarkers.length; i +=1 ){
+          if( remonte.name == allMarkers[i].name )
+            indice = i;
+        }
+        remonte = preds[indice];
+      } while (remonte.name != startPosition)
+
+      console.log("Markers après BFS", reverseMarker);*/
+      
+      //for ( let  i=0; i < allMarkers.length; i +=1 ) {
+        
+      //}
+
+      
       for (let i=0; i < nbMarkeur; i +=1){
         
         var newMarker1 = new H.map.Marker({lat:result.results.items[i].position[0], lng:result.results.items[i].position[1]});
