@@ -139,7 +139,7 @@ async function calculateRouteFromAtoB(platform) {
   } 
 
   await sleep(1000);
-  console.log(waypoints)
+  //console.log(waypoints)
 
   //Sending the request to calculate the route
   var router = platform.getRoutingService(null, 8),
@@ -530,151 +530,93 @@ async function placesSearch (platform) {
 
           for( let j=0; j < allMarkers.length; j +=1 ) {
             var dist;
-            if(i == j || (i == 0 && j == allMarkers.length-1) || (j == 0 && i == allMarkers.length-1))
+            if(i == j || (i == allMarkers.length-1) || (j == 0) || (i == 0 && j == allMarkers.length-1))
               dist = 0;
             else {
               var p2 = new H.geo.Point(allMarkers[j].coords.lat, allMarkers[j].coords.lng);
-              dist = p1.distance(p2); 
+              dist = p1.distance(p2);
             }
+            //console.log("Distance entre " + allMarkers[i].name + " et " + allMarkers[j].name + " = " + dist)
             matriceAdjacence[i][j] = dist;
           }
       }
 
+      // Affichage du tableau d'adjacence
+      var display = "        ";
+      for( let  i=0; i < allMarkers.length; i +=1 ) {
+        display+=("\t"+allMarkers[i].name + "\t");
+      }
+      display+=("\n");
+
       for( let  i=0; i < allMarkers.length; i +=1 ) {
         for( let j=0; j < allMarkers.length; j +=1 ) {
-          console.log("Distance entre " + allMarkers[i].name + " et " + allMarkers[j].name + " = " + matriceAdjacence[i][j]);
+          if(j==0)
+            display+=(allMarkers[i].name+"\t"+matriceAdjacence[i][j]+"\t");
+          else
+            display+=(matriceAdjacence[i][j]+"\t");
         }
-    }
+        display+=("\n");
+      }
+      //console.log(display);
 
-      //This contains the distances from the start node to all other nodes
-      var distances = [];
-      //Initializing with a distance of "Infinity"
-      for (var i = 0; i < matriceAdjacence.length; i++) distances[i] = Number.MAX_VALUE;
-      //The distance from the start node to itself is of course 0
-      distances[0] = 0;
 
-      //This contains whether a node was already visited
+      var depart = 0;
+      var arrivee = allMarkers.length-1;
+      var route = [];
       var visited = [];
 
-      var continuer = true;
+      for (var i = 0; i < allMarkers.length; i+=1)
+        visited[i] = false;
 
-      //While there are nodes left to visit...
-      while (continuer) {
-          // ... find the node with the currently shortest distance from the start node...
-          var shortestDistance = Number.MAX_VALUE;
-          var shortestIndex = -1;
-          for (var i = 0; i < matriceAdjacence.length; i++) {
-              //... by going through all nodes that haven't been visited yet
-              if (distances[i] < shortestDistance && !visited[i]) {
-                  shortestDistance = distances[i];
-                  shortestIndex = i;
-              }
-          }
+      var current = depart;
 
-          //console.log("Visiting node " + shortestDistance + " with current distance " + shortestDistance);
+      route.push(allMarkers[current])
+      visited[current]=true;
 
-          if (shortestIndex === -1) {
-              // There was no node not yet visited --> We are done
-              continuer = false;
-          }
-          else {
-            //...then, for all neighboring nodes....
-            for (var i = 0; i < matriceAdjacence[shortestIndex].length; i++) {
-                var distShortest = parseFloat(distances[shortestIndex]);
-                var matriceShortest = parseFloat(matriceAdjacence[shortestIndex][i]);
-                //...if the path over this edge is shorter...
-                if (matriceAdjacence[shortestIndex][i] !== 0 && distances[i] > distShortest + matriceShortest) {
-                    //...Save this path as new shortest path.
-                    distances[i] = distShortest + matriceShortest;
-                    //console.log("Updating distance of node " + i + " to " + distances[i]);
-                }
-            }
-            // Lastly, note that we are finished with this node.
-            visited[shortestIndex] = true;
-            //console.log("Visited nodes: " + visited);
-            //console.log("Currently lowest distances: " + distances);
-          }
-      }
-
-      console.log("RESULTAT: ", distances);
-
-      /*let preds = new Array(allMarkers.length).fill("-1");
-      var queue = []; // push to add - shift to remove
-      
-      queue.push(allMarkers[0]);
-      let s;
-
-      while(queue.length != 0) {
-        s = queue.shift();
-
-        if( s.name != endPosition ) {
-          var taille = allMarkers.length;
-          if (s.name = startPosition)
-            taille = taille - 1;
-
-          for ( let  i=0; i < taille; i +=1 ) {
-            if( s.name != allMarkers[i].name ) {
-              if ( s.color == 0 ) {
-                allMarkers[i].color = 1;
-                preds[i] = s;
-                queue.push(allMarkers[i]);
-              }
+      while (current != arrivee) {
+        var shortestDistance = Number.MAX_VALUE;
+        var shortestIndex = -1;
+        // on parcourt tous les adjacents non visités du sommet current
+        for(var adjacent=0; adjacent<matriceAdjacence.length; adjacent+=1){
+          if(visited[adjacent] == false && matriceAdjacence[current][adjacent] < shortestDistance && matriceAdjacence[current][adjacent] != 0 ){
+            if(adjacent != arrivee || route.length == allMarkers.length-1){
+              shortestIndex = adjacent;
+              shortestDistance = matriceAdjacence[current][adjacent];
             }
           }
         }
-        console.log("Fini ?");
+        if(shortestIndex != -1){
+          route.push(allMarkers[shortestIndex]);
+
+          visited[shortestIndex] = true;
+          current = shortestIndex;
+        }
       }
 
-      let reverseMarker = new Array();
-      let remonte = allMarkers[allMarkers.length -1];
-      let indice;
-      do{
-        reverseMarker.push(remonte);
-        for( let  i=0; i < allMarkers.length; i +=1 ){
-          if( remonte.name == allMarkers[i].name )
-            indice = i;
-        }
-        remonte = preds[indice];
-      } while (remonte.name != startPosition)
+      for (let i=1; i < route.length-1; i +=1){
 
-      console.log("Markers après BFS", reverseMarker);*/
-      
-      //for ( let  i=0; i < allMarkers.length; i +=1 ) {
-        
-      //}
-
-      
-      for (let i=0; i < nbMarkeur; i +=1){
-        
-        var newMarker1 = new H.map.Marker({lat:result.results.items[i].position[0], lng:result.results.items[i].position[1]});
-        newMarker1.instruction = result.results.items[i].title;
-        
         var p1 = new H.geo.Point(startLat, startLong);
-        var p2 = new H.geo.Point(result.results.items[i].position[0], result.results.items[i].position[1]);
-        var dist = p1.distance(p2); 
+        var p2 = new H.geo.Point(route[i].coords.lat, route[i].coords.lng);
+        var dist = p1.distance(p2);
 
         interestArray.push({
-          name: result.results.items[i].title,
+          name: route[i].name,
           coords: {
-            lat: result.results.items[i].position[0],
-            lng: result.results.items[i].position[1]
+            lat: route[i].coords.lat,
+            lng: route[i].coords.lng
           },
           distance: dist
         })
 
       }
-      
+
     },function (error) {
       alert(error);
     });
 
   await sleep(500);
 
-  interestArray.sort(function compare(a, b) {
-    return a.distance - b.distance;
-  });
-
-  console.log(interestArray)
+  console.log("Interrest Array : ", interestArray)
 }
 
 
