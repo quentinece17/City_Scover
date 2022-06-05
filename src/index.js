@@ -619,9 +619,10 @@ async function placesSearch (platform) {
   console.log("Interrest Array : ", interestArray)
 }
 
+var crd;
 
 function success(pos) {
-  var crd = pos.coords;
+  crd = pos.coords;
 
 
   console.log('Votre position actuelle est :');
@@ -631,6 +632,19 @@ function success(pos) {
   //gpsMarker.setPositon({ lat: crd.latitude, lng: crd.longitude });
   map.addObject(gpsMarker)
   console.log(`La précision est de ${crd.accuracy} mètres.`);
+}
+
+// reverseGeocoding function to retrieve address based on coords
+function getMyLocation(){
+  geocoder = platform.getSearchService();
+  geocoder.reverseGeocode({
+    at: '' + crd.latitude +',' + crd.longitude
+  }, (result) => {
+    result.items.forEach((item) => {
+      console.log(item.address.label);
+      document.getElementById('start').value = item.address.label;
+    });
+  }, alert);
 }
 
 function error(err) {
